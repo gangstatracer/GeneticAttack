@@ -39,7 +39,7 @@ def ping_avg(destination):
 def eval_func(genome):
     score = 0.0
     attack = Thread(target=startAttack, args=(
-        genome.type, genome.duration, genome.interval, genome.random_source_ip, genome.random_source_port,
+        genome.attack_type, genome.duration, genome.interval, genome.random_source_ip, genome.random_source_port,
         genome.random_destination_port, genome.source_ip, genome.source_port, genome.destination_ip,
         genome.destination_port, genome.data_length))
     attack.start()
@@ -53,8 +53,18 @@ def eval_func(genome):
     return score
 
 
-constants = {0: (AttackType.UDP, AttackType.TCP, AttackType.ICMP), 1: xrange(2), 2: xrange(1), 3: xrange(1),
-             4: xrange(1), 5: xrange(1), 6: getRandomIp, 7: xrange(1024), 8: xrange(1024), 9: xrange(10)}
+constants = {
+    0: (AttackType.UDP, AttackType.TCP, AttackType.ICMP),  # attack type
+    1: xrange(20),  # duration
+    2: xrange(2),  # interval
+    3: xrange(1),  # random flags
+    4: xrange(1),
+    5: xrange(1),
+    6: getRandomIp,  # source ip
+    7: xrange(1024),  # source port
+    8: xrange(1024),  # destination port
+    9: xrange(1000)  # data length
+}
 
 
 def rand_init(genome, i):
@@ -102,42 +112,45 @@ def AttackCrossover(genome, **args):
 
     for i in xrange(len(gMom)):
         if Util.randomFlipCoin(0.5):
-            temp = sister[i]
-            sister[i] = brother[i]
-            brother[i] = temp
+            sister[i], brother[i] = brother[i], sister[i]
+
 
     return sister, brother
 
 
 class AttackGenome(GenomeBase.GenomeBase):
     def __repr__(self):
-        return
-        """
-        Source: %s:%s
-        Random source ip: %s
-        Random source port: %s
+        return str.format(
+            """
+        Attack type: {0!r}
 
-        Destination: %s:%s
-        Random destination port: %s
+        Source: {1}:{2}
+        Random source ip: {3!r}
+        Random source port: {4!r}
 
-        Data length: %s
-        Duration: %s
-        Interval: %s
-        """ % (self.source_ip, self.source_port, self.random_source_ip, self.random_source_port, self.destination_ip,
-               self.destination_port, self.random_destination_port, self.data_length, self.duration, self.interval)
+        Destination: {5}:{6}
+        Random destination port: {7!r}
+
+        Data length: {8}
+        Duration: {9}
+        Interval: {10}
+        """, self.attack_type, self.source_ip, self.source_port, self.random_source_ip, self.random_source_port,
+            self.destination_ip,
+            self.destination_port, self.random_destination_port, self.data_length, self.duration, self.interval)
 
     def __len__(self):
         return len(self.to_array())
 
     def __init__(self, destination_ip, source_ip='192.168.1.1', source_port=20, destination_port=30, data_length=10,
-                 duration=0, interval=0, random_source_ip=True, random_source_port=True, random_destination_port=True):
+                 duration=0, interval=0, random_source_ip=True, random_source_port=True, random_destination_port=True,
+                 attack_type=AttackType.UDP):
         GenomeBase.GenomeBase.__init__(self)
         self.initializator.set(AttackInitializator)
         self.mutator.set(AttackMutator)
         self.crossover.set(AttackCrossover)
         self.evaluator.set(eval_func)
         self.destination_ip = destination_ip
-        self.type = AttackType.UDP
+        self.attack_type = attack_type
         assert (type(duration) is int)
         self.duration = duration
         self.interval = interval
@@ -151,7 +164,7 @@ class AttackGenome(GenomeBase.GenomeBase):
         self.data_length = data_length
 
     def to_array(self):
-        return [self.type, self.duration, self.interval, self.random_source_ip, self.random_source_port,
+        return [self.attack_type, self.duration, self.interval, self.random_source_ip, self.random_source_port,
                 self.random_destination_port, self.source_ip[:], self.source_port, self.destination_port,
                 self.data_length]
 
@@ -160,12 +173,10 @@ class AttackGenome(GenomeBase.GenomeBase):
 
     def __setitem__(self, i, item):
         if i == 0:
-            self.type = item
-            return
+            self.attack_type = item
         elif i == 1:
             assert type(item) is int
             self.duration = item
-            return
         elif i == 2:
             self.interval = item
         elif i == 3:
@@ -187,7 +198,7 @@ class AttackGenome(GenomeBase.GenomeBase):
             raise IndexError
 
     def copy(self, g):
-        g.type = self.type
+        g.attack_type = self.attack_type
         g.duration = self.duration
         g.interval = self.interval
         g.random_source_ip = self.random_source_ip
@@ -199,6 +210,6 @@ class AttackGenome(GenomeBase.GenomeBase):
         g.data_length = self.data_length
 
     def clone(self):
-        newcopy = AttackGenome(self.destination_ip)
-        self.copy(newcopy)
-        return newcopy
+        new_copy = AttackGenome(self.destination_ip)
+        self.copy(new_copy)
+        return new_copy

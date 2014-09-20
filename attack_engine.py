@@ -21,6 +21,9 @@ class AttackType(Enum):
     TCP = 2
     ICMP = 3
 
+    def __repr__(self):
+        return "UDP" if self == AttackType.UDP else "TCP" if self == AttackType.TCP else "ICMP"
+
 
 funcs = {AttackType.UDP: getUdpPacket, AttackType.TCP: getTcpSynPacket, AttackType.ICMP: getIcmpPacket}
 
@@ -42,7 +45,8 @@ def getPacket(getPacketFunc, random_source_ip, random_source_port, random_destin
     return getPacketFunc(srcIp=sIp, dstIp=destination_ip, srcPort=sP, dstPort=dP, data=getRandomData(data_length))
 
 
-def startAttack(type_attack, duration, interval, random_source_ip, random_source_port, random_destination_port, source_ip,
+def startAttack(type_attack, duration, interval, random_source_ip, random_source_port, random_destination_port,
+                source_ip,
                 source_port, destination_ip, destination_port, data_length):
     usedRandom = random_source_ip or random_source_port or random_destination_port
     sock = getSocket()
