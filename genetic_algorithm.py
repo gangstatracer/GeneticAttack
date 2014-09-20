@@ -1,27 +1,33 @@
-from time import time
 from threading import Thread
 
-from attack_engine import *
 import requests
 import pyping
 
+from attack_engine import *
 from pyevolve import GenomeBase
 from pyevolve import Util
-from enum import Enum
 
 
 def stopwatch(func):
     def measured(arg):
         start_time = time()
-        func(arg)
-        return time() - start_time
+        result = func(arg)
+        if result == 0:
+            return time() - start_time
+        else:
+            return 10000
 
     return measured
 
 
 @stopwatch
 def download_url(url):
-    r = requests.get(url)
+    try:
+        r = requests.get(url)
+        i = 0 if r.status_code == 200 else 1
+    except requests.exceptions.RequestException:
+        i = 1
+    return i
 
 
 def ping_avg(destination):
@@ -31,12 +37,12 @@ def ping_avg(destination):
 
 def eval_func(genome):
     score = 0.0
-    attack = Thread(target=startAttack, args=(genome.type, genome.duration, genome.interval, genome.random_source_ip, genome.random_source_port, genome.random_destination_port, genome.source_ip, genome.source_port, genome.destination_ip, genome.destination_port,genome.data_length))
+    attack = Thread(target=startAttack, args=(
+        genome.type, genome.duration, genome.interval, genome.random_source_ip, genome.random_source_port,
+        genome.random_destination_port, genome.source_ip, genome.source_port, genome.destination_ip,
+        genome.destination_port, genome.data_length))
     attack.start()
     sleep(genome.duration)
-    #startAttack(genome.type, genome.duration, genome.interval, genome.random_source_ip,
-     #                   genome.random_source_port, genome.random_destination_port, genome.source_ip, genome.source_port,
-      #                  genome.destination_ip, genome.destination_port, genome.data_length)
     score = download_url('http://www.google.ru')
     ping = ping_avg(genome.destination_ip)
     if ping is None:
@@ -67,7 +73,7 @@ def AttackMutator(genome, **args):
     if args["pmut"] <= 0.0:
         return 0
     listSize = len(genome)
-    mutations = args["pmut"] * (listSize)
+    mutations = args["pmut"] * listSize
 
     if mutations < 1.0:
         mutations = 0
@@ -78,15 +84,13 @@ def AttackMutator(genome, **args):
 
     else:
         for it in xrange(int(round(mutations))):
-            which_gene = rand_randint(0, listSize - 1)
+            which_gene = rand_init(0, listSize - 1)
             genome[which_gene] = rand_init(genome, which_gene)
 
     return mutations
 
 
 def AttackCrossover(genome, **args):
-    sister = None
-    brother = None
     gMom = args["mom"]
     gDad = args["dad"]
 
@@ -101,11 +105,10 @@ def AttackCrossover(genome, **args):
             sister[i] = brother[i]
             brother[i] = temp
 
-    return (sister, brother)
+    return sister, brother
 
 
 class AttackGenome(GenomeBase.GenomeBase):
-
     attack = startAttack
 
     def __len__(self):
@@ -120,6 +123,7 @@ class AttackGenome(GenomeBase.GenomeBase):
         self.evaluator.set(eval_func)
         self.destination_ip = destination_ip
         self.type = AttackType.UDP
+        assert(type(duration) is int)
         self.duration = duration
         self.interval = interval
         self.random_source_ip = random_source_ip
