@@ -1,6 +1,7 @@
 from threading import Thread
 
 import requests
+
 import pyping
 
 from attack_engine import *
@@ -79,13 +80,13 @@ def AttackMutator(genome, **args):
         mutations = 0
         for it in xrange(listSize):
             if Util.randomFlipCoin(args["pmut"]):
-                genome[it] = rand_init(genome, it)
+                genome = rand_init(genome, it)
             mutations += 1
 
     else:
         for it in xrange(int(round(mutations))):
             which_gene = rand_init(0, listSize - 1)
-            genome[which_gene] = rand_init(genome, which_gene)
+            genome = rand_init(genome, which_gene)
 
     return mutations
 
@@ -123,7 +124,7 @@ class AttackGenome(GenomeBase.GenomeBase):
         self.evaluator.set(eval_func)
         self.destination_ip = destination_ip
         self.type = AttackType.UDP
-        assert(type(duration) is int)
+        assert (type(duration) is int)
         self.duration = duration
         self.interval = interval
         self.random_source_ip = random_source_ip
@@ -132,11 +133,13 @@ class AttackGenome(GenomeBase.GenomeBase):
         self.source_ip = source_ip
         self.source_port = source_port
         self.destination_port = destination_port
+        assert type(data_length) is int
         self.data_length = data_length
 
     def to_array(self):
         return [self.type, self.duration, self.interval, self.random_source_ip, self.random_source_port,
-                self.random_destination_port, self.source_ip, self.source_port, self.destination_port, self.data_length]
+                self.random_destination_port, self.source_ip[:], self.source_port, self.destination_port,
+                self.data_length]
 
     def __getitem__(self, i):
         return self.to_array()[i]
@@ -144,24 +147,30 @@ class AttackGenome(GenomeBase.GenomeBase):
     def __setitem__(self, i, item):
         if i == 0:
             self.type = item
-        if i == 1:
+            return
+        elif i == 1:
+            assert type(item) is int
             self.duration = item
-        if i == 2:
+            return
+        elif i == 2:
             self.interval = item
-        if i == 3:
+        elif i == 3:
             self.random_source_ip = item
-        if i == 4:
+        elif i == 4:
             self.random_source_port = item
-        if i == 5:
+        elif i == 5:
             self.random_destination_port = item
-        if i == 6:
+        elif i == 6:
             self.source_ip = item
-        if i == 7:
+        elif i == 7:
             self.source_port = item
-        if i == 8:
+        elif i == 8:
             self.destination_port = item
-        if i == 9:
+        elif i == 9:
+            assert type(item) is int
             self.data_length = item
+        else:
+            raise IndexError
 
     def copy(self, g):
         g.type = self.type
@@ -176,6 +185,6 @@ class AttackGenome(GenomeBase.GenomeBase):
         g.data_length = self.data_length
 
     def clone(self):
-        clone = AttackGenome(self.destination_ip)
-        self.copy(clone)
-        return clone
+        newcopy = AttackGenome(self.destination_ip)
+        self.copy(newcopy)
+        return newcopy
