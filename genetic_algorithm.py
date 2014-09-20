@@ -110,7 +110,21 @@ def AttackCrossover(genome, **args):
 
 
 class AttackGenome(GenomeBase.GenomeBase):
-    attack = startAttack
+    def __repr__(self):
+        return
+        """
+        Source: %s:%s
+        Random source ip: %s
+        Random source port: %s
+
+        Destination: %s:%s
+        Random destination port: %s
+
+        Data length: %s
+        Duration: %s
+        Interval: %s
+        """ % (self.source_ip, self.source_port, self.random_source_ip, self.random_source_port, self.destination_ip,
+               self.destination_port, self.random_destination_port, self.data_length, self.duration, self.interval)
 
     def __len__(self):
         return len(self.to_array())
