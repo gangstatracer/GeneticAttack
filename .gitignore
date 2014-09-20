@@ -1,2 +1,3 @@
 cmd.bat
 *.csv
+*.pyc
