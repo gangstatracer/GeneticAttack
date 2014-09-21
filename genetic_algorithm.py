@@ -1,7 +1,6 @@
 from threading import Thread
 
 import requests
-
 import pyping
 
 from attack_engine import *
@@ -33,7 +32,7 @@ def download_url(url):
 
 def ping_avg(destination):
     r = pyping.ping(destination)
-    return r.avg_rtt
+    return 10000 if r.avg_rtt is None else r.avg_rtt
 
 
 def eval_func(genome):
@@ -46,8 +45,6 @@ def eval_func(genome):
     sleep(genome.duration)
     score = download_url('http://www.google.ru')
     ping = ping_avg(genome.destination_ip)
-    if ping is None:
-        ping = 10000
     score += float(ping)
     attack.join()
     return score
@@ -61,8 +58,8 @@ constants = {
     4: xrange(1),
     5: xrange(1),
     6: getRandomIp,  # source ip
-    7: xrange(1024),  # source port
-    8: xrange(1024),  # destination port
+    7: getRandomPort(),  # source port
+    8: getRandomPort(),  # destination port
     9: xrange(1000)  # data length
 }
 
@@ -75,46 +72,43 @@ def rand_init(genome, i):
     return genome
 
 
-def AttackInitializator(genome, **args):
+def attack_initializer(genome, **args):
     for i in xrange(len(genome)):
         genome = rand_init(genome, i)
 
 
-def AttackMutator(genome, **args):
+def attack_simple_mutator(genome, **args):
     if args["pmut"] <= 0.0:
         return 0
-    listSize = len(genome)
-    mutations = args["pmut"] * listSize
+    list_size = len(genome)
+    mutations = args["pmut"] * list_size
 
     if mutations < 1.0:
         mutations = 0
-        for it in xrange(listSize):
+        for it in xrange(list_size):
             if Util.randomFlipCoin(args["pmut"]):
                 genome = rand_init(genome, it)
             mutations += 1
-
     else:
         for it in xrange(int(round(mutations))):
-            which_gene = rand_init(0, listSize - 1)
+            which_gene = rand_init(0, list_size - 1)
             genome = rand_init(genome, which_gene)
 
     return mutations
 
 
-def AttackCrossover(genome, **args):
-    gMom = args["mom"]
-    gDad = args["dad"]
+def attack_crossover(genome, **args):
+    g_mom = args["mom"]
+    g_dad = args["dad"]
 
-    sister = gMom.clone()
-    brother = gDad.clone()
+    sister = g_mom.clone()
+    brother = g_dad.clone()
     sister.resetStats()
     brother.resetStats()
 
-    for i in xrange(len(gMom)):
+    for i in xrange(len(g_mom)):
         if Util.randomFlipCoin(0.5):
             sister[i], brother[i] = brother[i], sister[i]
-
-
     return sister, brother
 
 
@@ -145,9 +139,9 @@ class AttackGenome(GenomeBase.GenomeBase):
                  duration=0, interval=0, random_source_ip=True, random_source_port=True, random_destination_port=True,
                  attack_type=AttackType.UDP):
         GenomeBase.GenomeBase.__init__(self)
-        self.initializator.set(AttackInitializator)
-        self.mutator.set(AttackMutator)
-        self.crossover.set(AttackCrossover)
+        self.initializator.set(attack_initializer)
+        self.mutator.set(attack_simple_mutator)
+        self.crossover.set(attack_crossover)
         self.evaluator.set(eval_func)
         self.destination_ip = destination_ip
         self.attack_type = attack_type

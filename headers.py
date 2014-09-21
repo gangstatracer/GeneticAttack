@@ -32,7 +32,7 @@ def getTcpHeader(srcIp, dstIp, srcPort, dstPort):
     psh = int(Config.tcpMap['psh'])
     ack = int(Config.tcpMap['ack'])
     urg = int(Config.tcpMap['urg'])
-    window = socket.htons(int(Config.tcpMap['window']))  #   maximum allowed window size
+    window = socket.htons(int(Config.tcpMap['window']))  # maximum allowed window size
     check = 0
     urg_ptr = int(Config.tcpMap['urg_ptr'])
 

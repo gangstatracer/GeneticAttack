@@ -2,6 +2,7 @@
   <dictionary name="Gangstatracer">
     <words>
       <w>eval</w>
+      <w>mutator</w>
     </words>
   </dictionary>
 </component>

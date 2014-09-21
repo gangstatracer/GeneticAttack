@@ -1,16 +1,17 @@
 from pyevolve import G1DList
 from pyevolve import GSimpleGA
 from pyevolve import Selectors
-from pyevolve import Statistics
 from pyevolve import DBAdapters
 import pyevolve
 
+
 def eval_func(chromosome):
-   score = 0.0
-   for value in chromosome:
-      if value==0:
-         score += 1   
-   return score
+    score = 0.0
+    for value in chromosome:
+        if value == 0:
+            score += 1
+    return score
+
 
 pyevolve.logEnable()
 genome = G1DList.G1DList(50)

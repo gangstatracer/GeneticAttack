@@ -1,5 +1,8 @@
-import time, requests, pyping
+import time
 from threading import Thread
+
+import requests
+import pyping
 
 
 def stopwatch(func):
