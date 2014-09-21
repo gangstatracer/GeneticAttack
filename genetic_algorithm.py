@@ -3,31 +3,34 @@ from threading import Thread
 import requests
 import pyping
 
+from ThreadWithReturnValue import ThreadWithReturnValue
+
 from attack_engine import *
 from pyevolve import GenomeBase
 from pyevolve import Util
 
 
-def stopwatch(func):
-    def measured(arg):
-        start_time = time()
-        result = func(arg)
-        if result == 0:
-            return time() - start_time
-        else:
-            return 10000
-
-    return measured
+def avg_time(func, duration, address):
+    finish = time() + duration
+    count = 0
+    accumulator = 0.0
+    while time() < finish:
+        count += 1
+        accumulator += func(address)
+    return accumulator / count
 
 
-@stopwatch
 def download_url(url):
+    start_time = time()
     try:
         r = requests.get(url)
         i = 0 if r.status_code == 200 else 1
     except requests.exceptions.RequestException:
         i = 1
-    return i
+    if i == 0:
+        return time() - start_time
+    else:
+        return 10000
 
 
 def ping_avg(destination):
@@ -36,39 +39,29 @@ def ping_avg(destination):
 
 
 def eval_func(genome):
-    score = 0.0
-    attack = Thread(target=startAttack, args=(
+    attack = Thread(target=start_attack, args=(
         genome.attack_type, genome.duration, genome.interval, genome.random_source_ip, genome.random_source_port,
         genome.random_destination_port, genome.source_ip, genome.source_port, genome.destination_ip,
         genome.destination_port, genome.data_length))
+
     attack.start()
-    sleep(genome.duration)
-    score = download_url('http://www.google.ru')
-    ping = ping_avg(genome.destination_ip)
-    score += float(ping)
+    ping = ThreadWithReturnValue(target=avg_time, args=(ping_avg, genome.duration, genome.destination_ip))
+    download = ThreadWithReturnValue(target=avg_time, args=(download_url, genome.duration, Config.url_to_download))
+    ping.start()
+    download.start()
+    # sleep(genome.duration)
+    # score = download_url('http://www.google.ru', duration=genome.duration)
+    # ping = ping_avg(genome.destination_ip, duration=genome.duration)
     attack.join()
+    score = ping.join() + download.join()
     return score
 
 
-constants = {
-    0: (AttackType.UDP, AttackType.TCP, AttackType.ICMP),  # attack type
-    1: xrange(20),  # duration
-    2: xrange(2),  # interval
-    3: xrange(1),  # random flags
-    4: xrange(1),
-    5: xrange(1),
-    6: getRandomIp,  # source ip
-    7: getRandomPort(),  # source port
-    8: getRandomPort(),  # destination port
-    9: xrange(1000)  # data length
-}
-
-
 def rand_init(genome, i):
-    if hasattr(constants[i], '__len__'):
-        genome[i] = constants[i][randint(0, len(constants[i]) - 1)]
+    if hasattr(Config.attack_constants[i], '__len__'):
+        genome[i] = Config.attack_constants[i][randint(0, len(Config.attack_constants[i]) - 1)]
     else:
-        genome[i] = constants[i]()
+        genome[i] = Config.attack_constants[i]()
     return genome
 
 
@@ -129,8 +122,8 @@ class AttackGenome(GenomeBase.GenomeBase):
         Duration: {9}
         Interval: {10}
         """, self.attack_type, self.source_ip, self.source_port, self.random_source_ip, self.random_source_port,
-            self.destination_ip,
-            self.destination_port, self.random_destination_port, self.data_length, self.duration, self.interval)
+            self.destination_ip, self.destination_port, self.random_destination_port, self.data_length, self.duration,
+            self.interval)
 
     def __len__(self):
         return len(self.to_array())
