@@ -2,3 +2,4 @@ cmd.bat
 *.csv
 *.pyc
 site/book1.txt
+.idea/workspace.xml
