@@ -60,7 +60,8 @@ def eval_func(genome):
 
 def rand_init(genome, i):
     if hasattr(Config.attack_constants[i], '__len__'):
-        genome[i] = Config.attack_constants[i][randint(0, len(Config.attack_constants[i]) - 1)]
+        k = randint(0, len(Config.attack_constants[i])-1)
+        genome[i] = Config.attack_constants[i][k]
     else:
         genome[i] = Config.attack_constants[i]()
     return genome
@@ -168,11 +169,11 @@ class AttackGenome(GenomeBase.GenomeBase):
         elif i == 2:
             self.interval = item
         elif i == 3:
-            self.random_source_ip = item
+            self.random_source_ip = bool(item)
         elif i == 4:
-            self.random_source_port = item
+            self.random_source_port = bool(item)
         elif i == 5:
-            self.random_destination_port = item
+            self.random_destination_port = bool(item)
         elif i == 6:
             self.source_ip = item
         elif i == 7:

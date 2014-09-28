@@ -23,9 +23,9 @@ def reload_conf():
         0: (attack_engine.AttackType.UDP, attack_engine.AttackType.TCP, attack_engine.AttackType.ICMP),  # attack type
         1: xrange(int(attack_max["duration"])),  # duration
         2: xrange(int(attack_max["interval"])),  # interval
-        3: xrange(1),  # random flags
-        4: xrange(1),
-        5: xrange(1),
+        3: xrange(2),  # random flags
+        4: xrange(2),
+        5: xrange(2),
         6: attack_engine.get_random_ip,  # source ip
         7: attack_engine.get_random_port,  # source port
         8: attack_engine.get_random_port,  # destination port
