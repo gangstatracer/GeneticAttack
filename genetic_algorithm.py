@@ -1,3 +1,4 @@
+from random import choice
 from threading import Thread
 
 import requests
@@ -60,8 +61,7 @@ def eval_func(genome):
 
 def rand_init(genome, i):
     if hasattr(Config.attack_constants[i], '__len__'):
-        k = randint(0, len(Config.attack_constants[i])-1)
-        genome[i] = Config.attack_constants[i][k]
+        genome[i] = choice(Config.attack_constants[i])
     else:
         genome[i] = Config.attack_constants[i]()
     return genome
