@@ -19,13 +19,14 @@ def reload_conf():
     icmpMap = config_section_map("icmp")
     attack_max = config_section_map("attack_params_max")
     url_to_download = config_section_map("url")["address"]
+    duration_bounds = map(int, attack_max["duration"].split(' '))
     attack_constants = {
         0: (attack_engine.AttackType.UDP, attack_engine.AttackType.TCP, attack_engine.AttackType.ICMP),  # attack type
-        1: xrange(int(attack_max["duration"])),  # duration
+        1: xrange(duration_bounds[0], duration_bounds[1]),  # duration
         2: xrange(int(attack_max["interval"])),  # interval
-        3: (True, False), #xrange(2),  # random flags
-        4: (True, False), #xrange(2),
-        5: (True, False), #xrange(2),
+        3: (True, False),  # xrange(2),  # random flags
+        4: (True, False),  #xrange(2),
+        5: (True, False),  #xrange(2),
         6: attack_engine.get_random_ip,  # source ip
         7: attack_engine.get_random_port,  # source port
         8: attack_engine.get_random_port,  # destination port
