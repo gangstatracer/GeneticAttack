@@ -1,0 +1,35 @@
+##run1
+Gen. 1 (5.00%): Max/Min/Avg Fitness(Raw) [15.41(19.82)/8.77(1.79)/12.84(12.84)]
+Gen. 2 (10.00%): Max/Min/Avg Fitness(Raw) [17.16(25.50)/11.83(4.63)/14.30(14.30)]
+Gen. 3 (15.00%): Max/Min/Avg Fitness(Raw) [14.85(25.50)/10.81(4.09)/12.37(12.37)]
+Gen. 4 (20.00%): Max/Min/Avg Fitness(Raw) [11.43(25.50)/8.82(3.66)/9.52(9.52)]
+Gen. 5 (25.00%): Max/Min/Avg Fitness(Raw) [9.65(25.50)/7.50(2.20)/8.04(8.04)]
+Gen. 6 (30.00%): Max/Min/Avg Fitness(Raw) [6.53(25.50)/5.26(2.13)/5.44(5.44)]
+Gen. 7 (35.00%): Max/Min/Avg Fitness(Raw) [5.63(25.50)/4.57(1.84)/4.70(4.70)]
+Gen. 8 (40.00%): Max/Min/Avg Fitness(Raw) [8.46(25.50)/6.69(2.27)/7.05(7.05)]
+Gen. 9 (45.00%): Max/Min/Avg Fitness(Raw) [6.44(25.50)/5.17(1.62)/5.37(5.37)]
+Gen. 10 (50.00%): Max/Min/Avg Fitness(Raw) [7.38(25.50)/5.87(1.79)/6.15(6.15)]
+Gen. 11 (55.00%): Max/Min/Avg Fitness(Raw) [7.45(25.50)/5.92(1.73)/6.21(6.21)]
+Gen. 12 (60.00%): Max/Min/Avg Fitness(Raw) [10.53(25.50)/8.05(1.87)/8.78(8.78)]
+Gen. 13 (65.00%): Max/Min/Avg Fitness(Raw) [6.87(25.50)/5.50(1.74)/5.73(5.73)]
+Gen. 14 (70.00%): Max/Min/Avg Fitness(Raw) [7.15(25.50)/5.72(2.04)/5.96(5.96)]
+Gen. 15 (75.00%): Max/Min/Avg Fitness(Raw) [5.78(25.50)/4.68(1.91)/4.82(4.82)]
+Gen. 16 (80.00%): Max/Min/Avg Fitness(Raw) [7.39(25.50)/5.88(1.69)/6.16(6.16)]
+Gen. 17 (85.00%): Max/Min/Avg Fitness(Raw) [9.49(25.50)/7.37(1.95)/7.91(7.91)]
+Gen. 18 (90.00%): Max/Min/Avg Fitness(Raw) [8.68(25.50)/6.86(2.50)/7.24(7.24)]
+Gen. 19 (95.00%): Max/Min/Avg Fitness(Raw) [15.44(25.50)/10.85(2.95)/12.87(12.87)]
+Gen. 20 (100.00%): Max/Min/Avg Fitness(Raw) [14.20(36.37)/11.22(5.44)/11.84(11.84)]
+Total time elapsed: 3398.888 seconds.
+
+        Attack type: ICMP
+
+        Source: 151.154.201.223:25382
+        Random source ip: True
+        Random source port: True
+
+        Destination: 192.168.0.1:27992
+        Random destination port: False
+
+        Data length: 4660
+        Duration: 10
+        Interval: 1
