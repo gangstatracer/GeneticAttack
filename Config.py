@@ -8,7 +8,7 @@ tcpMap = {}
 icmpMap = {}
 attack_constants = {}
 url_to_download = ""
-
+_infinity_ = 100000.0
 
 def reload_conf():
     global config, ipMap, tcpMap, icmpMap, attack_constants, url_to_download

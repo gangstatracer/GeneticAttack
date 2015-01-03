@@ -33,3 +33,18 @@ Total time elapsed: 3398.888 seconds.
         Data length: 4660
         Duration: 10
         Interval: 1
+		
+##run2
+Gen. 1 (5.00%): Max/Min/Avg Fitness(Raw) [119527.51(100003.68)/0.00(93360.57)/110279.55(99606.26)]
+Gen. 2 (10.00%): Max/Min/Avg Fitness(Raw) [100004.18(100003.68)/0.00(2.79)/84858.66(84858.66)]
+Exception in thread Thread-202:
+Traceback (most recent call last):
+  File "C:\Python26\lib\threading.py", line 532, in __bootstrap_inner
+    self.run()
+  File "C:\Python26\lib\threading.py", line 484, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "C:\Code\GeneticAttack\attack_engine.py", line 54, in start_attack
+    sock.sendto(packet, (destination_ip, 0))
+error: [Errno 10065] 
+
+Gen. 3 (15.00%): Max/Min/Avg Fitness(Raw) [82692.74(100003.68)/38367.60(4.25)/68910.62(68910.62)]

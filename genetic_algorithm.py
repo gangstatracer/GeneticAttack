@@ -31,13 +31,13 @@ def download_url(url):
     if i == 0:
         return time() - start_time
     else:
-        return 10000
+        return Config._infinity_
 
 
 def ping_avg(destination):
     assert pyping.is_valid_ip4_address(destination)
     r = pyping.ping(destination)
-    return 10000.0 if r.avg_rtt is None else float(r.avg_rtt)
+    return Config._infinity_ if r.avg_rtt is None else float(r.avg_rtt)
 
 
 def eval_func(genome):
